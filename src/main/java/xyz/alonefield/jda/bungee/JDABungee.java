@@ -12,7 +12,7 @@ public class JDABungee extends Plugin {
         this.common = new JDACommon(this) {
             @Override
             protected java.util.logging.Logger getLogger() {
-                return getPlugin().getLogger();
+                return JDABungee.this.getLogger();
             }
         };
         common.onEnable();

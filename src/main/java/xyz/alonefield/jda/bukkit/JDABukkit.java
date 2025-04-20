@@ -12,7 +12,7 @@ public class JDABukkit extends JavaPlugin {
         this.common = new JDACommon(this) {
             @Override
             protected java.util.logging.Logger getLogger() {
-                return getJavaPlugin().getLogger();
+                return JDABukkit.this.getLogger();
             }
         };
         common.onEnable();

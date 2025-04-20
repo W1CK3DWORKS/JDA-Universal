@@ -13,6 +13,7 @@
 
     <properties>
         <jda.version>5.4.0</jda.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <repositories>

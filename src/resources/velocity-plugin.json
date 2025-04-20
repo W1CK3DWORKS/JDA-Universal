@@ -1,0 +1,8 @@
+{
+	"id": "jda",
+	"name": "JDA",
+	"version": "${project.version}",
+	"description": "A simple Velocity plugin with JDA integration.",
+	"authors": ["YourName"],
+	"main": "xyz.alonefield.jda.velocity.JDAVelocity"
+}

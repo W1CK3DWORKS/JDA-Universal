@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    tags:
+      - 'v*'
   pull_request:
     branches:
       - main
@@ -30,11 +32,70 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: Extract Plugin Version
+        id: get_version
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "PLUGIN_VERSION=$VERSION" >> $GITHUB_ENV
+
       - name: Build with Maven
-        run: mvn clean package
+        run: mvn clean package -U
+        env:
+          MAVEN_OPTS: -Xmx2g
+
+      - name: List Target Directory
+        run: ls -l target/
+        if: failure()
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: JDA-Plugin
-          path: target/JDA-${{ github.sha }}.jar
+          path: target/JDA-${{ env.PLUGIN_VERSION }}.jar
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Extract Plugin Version
+        id: get_version
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "PLUGIN_VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: JDA-Plugin
+          path: target/
+
+      - name: Delete Previous Releases
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # List all releases and extract their IDs
+          RELEASE_IDS=$(gh release list --json id --jq '.[].id' || echo "")
+          if [ -n "$RELEASE_IDS" ]; then
+            for ID in $RELEASE_IDS; do
+              echo "Deleting release with ID: $ID"
+              gh release delete "$ID" --yes
+            done
+          else
+            echo "No previous releases found."
+          fi
+
+      - name: Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v${{ env.PLUGIN_VERSION }}" \
+            --title "JDA Plugin v${{ env.PLUGIN_VERSION }}" \
+            --notes "Release for JDA Plugin version ${{ env.PLUGIN_VERSION }}" \
+            target/JDA-${{ env.PLUGIN_VERSION }}.jar

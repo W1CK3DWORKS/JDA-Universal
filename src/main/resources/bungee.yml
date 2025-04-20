@@ -1,4 +1,4 @@
 name: JDA
-version: 5.4.0
+version: ${project.version}
 main: xyz.alonefield.jda.bungee.JDABungee
 description: A simple BungeeCord plugin with JDA integration.

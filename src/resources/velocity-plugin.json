@@ -1,7 +1,0 @@
-{
-  "id": "jda",
-  "name": "JDA",
-  "version": "5.4.0",
-  "description": "A simple Velocity plugin with JDA integration.",
-  "main": "xyz.alonefield.jda.velocity.JDAVelocity"
-}

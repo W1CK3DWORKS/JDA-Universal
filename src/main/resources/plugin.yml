@@ -1,5 +1,5 @@
 name: JDA
-version: 5.4.0
+version: ${project.version}
 main: xyz.alonefield.jda.bukkit.JDABukkit
 api-version: 1.13
 description: A simple Bukkit plugin with JDA integration.

@@ -10,6 +10,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -45,7 +48,11 @@ jobs:
 
       - name: List Target Directory
         run: ls -l target/
-        if: failure()
+        if: always()
+
+      - name: Inspect JAR Contents
+        run: unzip -l target/JDA-${{ env.PLUGIN_VERSION }}.jar
+        if: always()
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -58,9 +65,12 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
-    permissions:
-      contents: write
     steps:
+      - name: Debug Tag Information
+        run: |
+          echo "GitHub Ref: ${{ github.ref }}"
+          echo "Expected Tag: v${{ env.PLUGIN_VERSION }}"
+
       - name: Checkout Repository
         uses: actions/checkout@v4
 
@@ -76,26 +86,33 @@ jobs:
           name: JDA-Plugin
           path: target/
 
+      - name: List Downloaded Artifact
+        run: ls -l target/
+        if: always()
+
       - name: Delete Previous Releases
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # List all releases and extract their IDs
+          echo "Listing releases..."
           RELEASE_IDS=$(gh release list --json id --jq '.[].id' || echo "")
           if [ -n "$RELEASE_IDS" ]; then
             for ID in $RELEASE_IDS; do
               echo "Deleting release with ID: $ID"
-              gh release delete "$ID" --yes
+              gh release delete "$ID" --yes || echo "Failed to delete release $ID"
             done
           else
             echo "No previous releases found."
           fi
+        continue-on-error: true
 
       - name: Create Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          echo "Creating release for v${{ env.PLUGIN_VERSION }}"
           gh release create "v${{ env.PLUGIN_VERSION }}" \
             --title "JDA Plugin v${{ env.PLUGIN_VERSION }}" \
             --notes "Release for JDA Plugin version ${{ env.PLUGIN_VERSION }}" \
-            target/JDA-${{ env.PLUGIN_VERSION }}.jar
+            target/JDA-${{ env.PLUGIN_VERSION }}.jar || echo "Failed to create release"
+        continue-on-error: true

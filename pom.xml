@@ -26,10 +26,13 @@
             <id>bungeecord-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
-        <!-- Velocity -->
+        <!-- PaperMC (for Velocity) -->
         <repository>
-			<id>papermc</id>
-			<url>https://repo.papermc.io/repository/maven-public/</url>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
         <!-- Maven Central -->
         <repository>
@@ -58,10 +61,10 @@
         </dependency>
         <!-- Velocity API -->
         <dependency>
-			<groupId>com.velocitypowered</groupId>
-			<artifactId>velocity-api</artifactId>
-			<version>3.4.0-SNAPSHOT</version>
-			<scope>provided</scope>
+            <groupId>com.velocitypowered</groupId>
+            <artifactId>velocity-api</artifactId>
+            <version>3.4.0-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <!-- JDA -->
         <dependency>
@@ -69,7 +72,7 @@
             <artifactId>JDA</artifactId>
             <version>${jda.version}</version>
             <scope>compile</scope>
-            <!-- Optionally disable audio natives to reduce jar size by excluding `opus-java` and `tink` -->
+            <!-- Optionally disable audio natives to reduce jar size -->
             <exclusions>
                 <!-- required for encoding audio into opus, not needed if audio is already provided in opus encoding
                 <exclusion>
@@ -82,6 +85,13 @@
                     <artifactId>tink</artifactId>
                 </exclusion> -->
             </exclusions>
+        </dependency>
+        <!-- Gson (explicitly included to fix NoClassDefFoundError) -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

@@ -28,11 +28,8 @@
         </repository>
         <!-- Velocity -->
         <repository>
-            <id>velocity-repo</id>
-            <url>https://nexus.velocitypowered.com/repository/velocity/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+			<id>papermc</id>
+			<url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <!-- Maven Central -->
         <repository>
@@ -61,10 +58,10 @@
         </dependency>
         <!-- Velocity API -->
         <dependency>
-            <groupId>com.velocitypowered</groupId>
-            <artifactId>velocity-api</artifactId>
-            <version>3.4.0-SNAPSHOT</version>
-            <scope>provided</scope>
+			<groupId>com.velocitypowered</groupId>
+			<artifactId>velocity-api</artifactId>
+			<version>3.4.0-SNAPSHOT</version>
+			<scope>provided</scope>
         </dependency>
         <!-- JDA -->
         <dependency>
